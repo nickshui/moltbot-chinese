@@ -1,0 +1,164 @@
+{
+  "$schema": "https://docs.molt.bot/schema/config.json",
+  "description": "Moltbot 多频道配置示例 - 支持多个消息平台",
+  "gateway": {
+    "port": 18789,
+    "host": "0.0.0.0",
+    "logLevel": "info",
+    "dataDir": "~/.moltbot/data",
+    "enableWebUI": true,
+    "cors": {
+      "enabled": true,
+      "origins": ["http://localhost:3000"]
+    }
+  },
+  "models": {
+    "default": "claude-opus-4.5",
+    "thinking": "high",
+    "providers": {
+      "anthropic": {
+        "apiKey": "${ANTHROPIC_API_KEY}",
+        "models": ["claude-opus-4.5", "claude-sonnet-4"],
+        "maxTokens": 4096,
+        "temperature": 0.7
+      },
+      "openai": {
+        "apiKey": "${OPENAI_API_KEY}",
+        "models": ["gpt-4", "gpt-3.5-turbo"],
+        "maxTokens": 2048,
+        "temperature": 0.8
+      }
+    },
+    "failover": {
+      "enabled": true,
+      "strategy": "round-robin",
+      "fallbackChain": [
+        "claude-opus-4.5",
+        "claude-sonnet-4",
+        "gpt-4",
+        "gpt-3.5-turbo"
+      ],
+      "retryAttempts": 3,
+      "retryDelay": 1000
+    }
+  },
+  "channels": {
+    "telegram": {
+      "enabled": true,
+      "botToken": "${TELEGRAM_BOT_TOKEN}",
+      "dmPolicy": "pairing",
+      "allowFrom": [],
+      "botUsername": "my_bot",
+      "polling": {
+        "enabled": true,
+        "interval": 1000
+      }
+    },
+    "discord": {
+      "enabled": true,
+      "botToken": "${DISCORD_BOT_TOKEN}",
+      "applicationId": "${DISCORD_APP_ID}",
+      "dmPolicy": "pairing",
+      "allowFrom": [],
+      "guilds": [],
+      "intents": ["GUILDS", "GUILD_MESSAGES", "DIRECT_MESSAGES"]
+    },
+    "whatsapp": {
+      "enabled": true,
+      "dmPolicy": "pairing",
+      "allowFrom": [],
+      "sessionDir": "~/.moltbot/whatsapp-session",
+      "qrCode": {
+        "enabled": true,
+        "timeout": 60000
+      }
+    },
+    "slack": {
+      "enabled": true,
+      "botToken": "${SLACK_BOT_TOKEN}",
+      "appToken": "${SLACK_APP_TOKEN}",
+      "dmPolicy": "pairing",
+      "allowFrom": [],
+      "socketMode": true
+    },
+    "webchat": {
+      "enabled": true,
+      "port": 3000,
+      "cors": {
+        "enabled": true,
+        "origins": ["*"]
+      }
+    }
+  },
+  "workspaces": {
+    "personal": {
+      "name": "个人工作区",
+      "description": "用于个人任务和对话",
+      "model": "claude-opus-4.5",
+      "skills": ["browser", "cron", "files", "memory"],
+      "systemPrompt": "你是一个友好的个人助手，用中文回答问题。"
+    },
+    "work": {
+      "name": "工作工作区",
+      "description": "用于专业工作任务",
+      "model": "gpt-4",
+      "skills": ["browser", "cron", "files"],
+      "systemPrompt": "你是一个专业的工作助手，提供准确的技术支持。"
+    }
+  },
+  "defaultWorkspace": "personal",
+  "agent": {
+    "systemPrompt": "你是 Moltbot，一个智能、高效的中文 AI 助手。",
+    "locale": "zh-CN",
+    "responseLanguage": "zh-CN"
+  },
+  "security": {
+    "enablePairing": true,
+    "pairingTimeout": 300,
+    "maxSessionsPerUser": 20
+  },
+  "sessions": {
+    "defaultMode": "main",
+    "maxSessionAge": 86400000,
+    "autoCleanup": true,
+    "cleanupInterval": 3600000,
+    "persistHistory": true,
+    "maxHistoryLength": 100
+  },
+  "ui": {
+    "language": "zh-CN",
+    "theme": "dark",
+    "dateFormat": "YYYY-MM-DD",
+    "timeFormat": "24h",
+    "timezone": "Asia/Shanghai"
+  },
+  "performance": {
+    "maxConcurrentRequests": 20,
+    "requestTimeout": 30000,
+    "cacheEnabled": true,
+    "cacheTTL": 3600,
+    "mediaProcessing": {
+      "maxImageSize": 5242880,
+      "maxAudioSize": 10485760,
+      "maxVideoSize": 52428800
+    }
+  },
+  "logging": {
+    "level": "info",
+    "format": "json",
+    "outputs": [
+      {
+        "type": "console",
+        "enabled": true
+      },
+      {
+        "type": "file",
+        "enabled": true,
+        "path": "~/.moltbot/logs/gateway.log",
+        "maxSize": "10M",
+        "maxFiles": 10,
+        "compress": true
+      }
+    ]
+  }
+}

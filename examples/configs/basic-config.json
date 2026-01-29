@@ -1,0 +1,72 @@
+{
+  "$schema": "https://docs.molt.bot/schema/config.json",
+  "description": "Moltbot 基础配置示例 - 适合个人使用",
+  "gateway": {
+    "port": 18789,
+    "host": "127.0.0.1",
+    "logLevel": "info",
+    "dataDir": "~/.moltbot/data",
+    "enableWebUI": true
+  },
+  "models": {
+    "default": "claude-opus-4.5",
+    "thinking": "high",
+    "providers": {
+      "anthropic": {
+        "apiKey": "${ANTHROPIC_API_KEY}",
+        "models": ["claude-opus-4.5", "claude-sonnet-4"],
+        "maxTokens": 4096,
+        "temperature": 0.7
+      }
+    }
+  },
+  "channels": {
+    "telegram": {
+      "enabled": true,
+      "botToken": "${TELEGRAM_BOT_TOKEN}",
+      "dmPolicy": "pairing",
+      "allowFrom": []
+    }
+  },
+  "workspaces": {
+    "default": {
+      "name": "默认工作区",
+      "description": "个人使用的默认工作区",
+      "skills": ["browser", "cron", "files"]
+    }
+  },
+  "agent": {
+    "systemPrompt": "你是 Moltbot，一个友好、有帮助的中文 AI 助手。请用中文回答所有问题，并提供准确、有用的信息。",
+    "locale": "zh-CN",
+    "responseLanguage": "zh-CN"
+  },
+  "security": {
+    "enablePairing": true,
+    "pairingTimeout": 300,
+    "maxSessionsPerUser": 10
+  },
+  "ui": {
+    "language": "zh-CN",
+    "theme": "dark",
+    "dateFormat": "YYYY-MM-DD",
+    "timeFormat": "24h",
+    "timezone": "Asia/Shanghai"
+  },
+  "logging": {
+    "level": "info",
+    "format": "json",
+    "outputs": [
+      {
+        "type": "console",
+        "enabled": true
+      },
+      {
+        "type": "file",
+        "enabled": true,
+        "path": "~/.moltbot/logs/gateway.log",
+        "maxSize": "10M",
+        "maxFiles": 5
+      }
+    ]
+  }
+}
