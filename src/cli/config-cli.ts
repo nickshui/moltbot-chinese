@@ -1,5 +1,6 @@
 import JSON5 from "json5";
 import type { Command } from "commander";
+import { t } from "../i18n/index.js";
 
 import { readConfigFileSnapshot, writeConfigFile } from "../config/config.js";
 import { danger, info } from "../globals.js";
@@ -181,7 +182,7 @@ async function loadValidConfig() {
 export function registerConfigCli(program: Command) {
   const cmd = program
     .command("config")
-    .description("Config helpers (get/set/unset). Run without subcommand for the wizard.")
+    .description(t("cli.config"))
     .addHelpText(
       "after",
       () =>
@@ -220,14 +221,14 @@ export function registerConfigCli(program: Command) {
 
   cmd
     .command("get")
-    .description("Get a config value by dot path")
+    .description(t("options.getConfig", "Get config value by dot path"))
     .argument("<path>", "Config path (dot or bracket notation)")
     .option("--json", "Output JSON", false)
     .action(async (path: string, opts) => {
       try {
         const parsedPath = parsePath(path);
         if (parsedPath.length === 0) {
-          throw new Error("Path is empty.");
+          throw new Error(t("errors.pathEmpty", "Path is empty."));
         }
         const snapshot = await loadValidConfig();
         const res = getAtPath(snapshot.config, parsedPath);
@@ -257,20 +258,24 @@ export function registerConfigCli(program: Command) {
 
   cmd
     .command("set")
-    .description("Set a config value by dot path")
+    .description(t("options.setConfig", "Set config value by dot path"))
     .argument("<path>", "Config path (dot or bracket notation)")
     .argument("<value>", "Value (JSON5 or raw string)")
     .option("--json", "Parse value as JSON5 (required)", false)
     .action(async (path: string, value: string, opts) => {
       try {
         const parsedPath = parsePath(path);
-        if (parsedPath.length === 0) throw new Error("Path is empty.");
+        if (parsedPath.length === 0) throw new Error(t("errors.pathEmpty", "Path is empty."));
         const parsedValue = parseValue(value, opts);
         const snapshot = await loadValidConfig();
         const next = snapshot.config as Record<string, unknown>;
         setAtPath(next, parsedPath, parsedValue);
         await writeConfigFile(next);
-        defaultRuntime.log(info(`Updated ${path}. Restart the gateway to apply.`));
+        defaultRuntime.log(
+          info(
+            `${t("cli.configUpdated", "Updated")} ${path}. ${t("cli.restartGateway", "Restart the gateway to apply.")}`,
+          ),
+        );
       } catch (err) {
         defaultRuntime.error(danger(String(err)));
         defaultRuntime.exit(1);
@@ -279,7 +284,7 @@ export function registerConfigCli(program: Command) {
 
   cmd
     .command("unset")
-    .description("Remove a config value by dot path")
+    .description(t("options.unsetConfig", "Remove config value by dot path"))
     .argument("<path>", "Config path (dot or bracket notation)")
     .action(async (path: string) => {
       try {

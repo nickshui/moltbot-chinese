@@ -1,4 +1,5 @@
 import type { Command } from "commander";
+import { t } from "../../i18n/index.js";
 import { formatDocsLink } from "../../terminal/links.js";
 import { theme } from "../../terminal/theme.js";
 import { formatHelpExamples } from "../help-format.js";
@@ -24,14 +25,14 @@ import { registerMessageBroadcastCommand } from "./message/register.broadcast.js
 export function registerMessageCommands(program: Command, ctx: ProgramContext) {
   const message = program
     .command("message")
-    .description("Send messages and channel actions")
+    .description(t("cli.message"))
     .addHelpText(
       "after",
       () =>
         `
-${theme.heading("Examples:")}
+${theme.heading(t("help.examples"))}
 ${formatHelpExamples([
-  ['moltbot message send --target +15555550123 --message "Hi"', "Send a text message."],
+  ['moltbot message send --target +15555550123 --message "Hi"', t("examples.sendMessage")],
   [
     'moltbot message send --target +15555550123 --message "Hi" --media photo.jpg',
     "Send a message with media.",
@@ -46,7 +47,7 @@ ${formatHelpExamples([
   ],
 ])}
 
-${theme.muted("Docs:")} ${formatDocsLink("/cli/message", "docs.molt.bot/cli/message")}`,
+${theme.muted(t("help.docs"))} ${formatDocsLink("/cli/message", "docs.molt.bot/cli/message")}`,
     )
     .action(() => {
       message.help({ error: true });

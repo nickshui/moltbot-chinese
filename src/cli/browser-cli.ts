@@ -1,4 +1,5 @@
 import type { Command } from "commander";
+import { t } from "../i18n/index.js";
 
 import { danger } from "../globals.js";
 import { defaultRuntime } from "../runtime.js";
@@ -20,7 +21,7 @@ import { addGatewayClientOptions } from "./gateway-rpc.js";
 export function registerBrowserCli(program: Command) {
   const browser = program
     .command("browser")
-    .description("Manage clawd's dedicated browser (Chrome/Chromium)")
+    .description(t("cli.browser"))
     .option("--browser-profile <name>", "Browser profile name (default from config)")
     .option("--json", "Output machine-readable JSON", false)
     .addHelpText(

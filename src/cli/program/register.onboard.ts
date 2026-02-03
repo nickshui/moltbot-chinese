@@ -1,4 +1,5 @@
 import type { Command } from "commander";
+import { t } from "../../i18n/index.js";
 import type { GatewayDaemonRuntime } from "../../commands/daemon-runtime.js";
 import { onboardCommand } from "../../commands/onboard.js";
 import type {
@@ -34,67 +35,67 @@ function resolveInstallDaemonFlag(
 export function registerOnboardCommand(program: Command) {
   program
     .command("onboard")
-    .description("Interactive wizard to set up the gateway, workspace, and skills")
+    .description(t("cli.onboard"))
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/onboard", "docs.molt.bot/cli/onboard")}\n`,
+        `\n${theme.muted(t("help.docs"))} ${formatDocsLink("/cli/onboard", "docs.molt.bot/cli/onboard")}\n`,
     )
-    .option("--workspace <dir>", "Agent workspace directory (default: ~/clawd)")
-    .option("--reset", "Reset config + credentials + sessions + workspace before running wizard")
-    .option("--non-interactive", "Run without prompts", false)
+    .option("--workspace <dir>", t("options.workspace"))
+    .option("--reset", t("options.reset"))
+    .option("--non-interactive", t("options.nonInteractive"), false)
     .option(
       "--accept-risk",
-      "Acknowledge that agents are powerful and full system access is risky (required for --non-interactive)",
+      t("options.acceptRisk", "Acknowledge risk (required for --non-interactive)"),
       false,
     )
-    .option("--flow <flow>", "Wizard flow: quickstart|advanced|manual")
-    .option("--mode <mode>", "Wizard mode: local|remote")
+    .option("--flow <flow>", `${t("options.flow")}: quickstart|advanced|manual`)
+    .option("--mode <mode>", `${t("options.mode")}: local|remote`)
+    .option("--auth-choice <choice>", `${t("options.authChoice", "Auth")}: setup-token|token|...`)
+    .option("--token-provider <id>", t("options.tokenProvider", "Token provider id"))
+    .option("--token <token>", t("options.tokenValue", "Token value"))
+    .option("--token-profile-id <id>", t("options.tokenProfileId", "Auth profile id"))
     .option(
-      "--auth-choice <choice>",
-      "Auth: setup-token|token|chutes|openai-codex|openai-api-key|openrouter-api-key|ai-gateway-api-key|moonshot-api-key|kimi-code-api-key|synthetic-api-key|venice-api-key|gemini-api-key|zai-api-key|apiKey|minimax-api|minimax-api-lightning|opencode-zen|skip",
+      "--token-expires-in <duration>",
+      t("options.tokenExpiresIn", "Token expiry (e.g. 365d, 12h)"),
     )
+    .option("--anthropic-api-key <key>", t("options.anthropicApiKey"))
+    .option("--openai-api-key <key>", t("options.openaiApiKey"))
+    .option("--openrouter-api-key <key>", t("options.openrouterApiKey"))
+    .option("--ai-gateway-api-key <key>", t("options.aiGatewayApiKey"))
+    .option("--moonshot-api-key <key>", t("options.moonshotApiKey"))
+    .option("--kimi-code-api-key <key>", t("options.kimiCodeApiKey"))
+    .option("--gemini-api-key <key>", t("options.geminiApiKey"))
+    .option("--zai-api-key <key>", t("options.zaiApiKey"))
+    .option("--minimax-api-key <key>", t("options.minimaxApiKey"))
+    .option("--synthetic-api-key <key>", t("options.syntheticApiKey"))
+    .option("--venice-api-key <key>", t("options.veniceApiKey"))
+    .option("--opencode-zen-api-key <key>", t("options.opencodeZenApiKey"))
+    .option("--gateway-port <port>", t("options.port"))
+    .option("--gateway-bind <mode>", `${t("options.bind")}: loopback|tailnet|lan|auto|custom`)
+    .option("--gateway-auth <mode>", `${t("options.auth")}: token|password`)
+    .option("--gateway-token <token>", t("options.token"))
+    .option("--gateway-password <password>", t("options.password", "Gateway password"))
+    .option("--remote-url <url>", t("options.remoteUrl"))
+    .option("--remote-token <token>", t("options.remoteToken"))
+    .option("--tailscale <mode>", `Tailscale: off|serve|funnel`)
     .option(
-      "--token-provider <id>",
-      "Token provider id (non-interactive; used with --auth-choice token)",
+      "--tailscale-reset-on-exit",
+      t("options.tailscaleResetOnExit", "Reset tailscale on exit"),
     )
-    .option("--token <token>", "Token value (non-interactive; used with --auth-choice token)")
+    .option("--install-daemon", t("options.installDaemon"))
+    .option("--no-install-daemon", t("options.skipDaemon"))
+    .option("--skip-daemon", t("options.skipDaemon"))
     .option(
-      "--token-profile-id <id>",
-      "Auth profile id (non-interactive; default: <provider>:manual)",
+      "--daemon-runtime <runtime>",
+      `${t("options.daemonRuntime", "Daemon runtime")}: node|bun`,
     )
-    .option("--token-expires-in <duration>", "Optional token expiry duration (e.g. 365d, 12h)")
-    .option("--anthropic-api-key <key>", "Anthropic API key")
-    .option("--openai-api-key <key>", "OpenAI API key")
-    .option("--openrouter-api-key <key>", "OpenRouter API key")
-    .option("--ai-gateway-api-key <key>", "Vercel AI Gateway API key")
-    .option("--moonshot-api-key <key>", "Moonshot API key")
-    .option("--kimi-code-api-key <key>", "Kimi Code API key")
-    .option("--gemini-api-key <key>", "Gemini API key")
-    .option("--zai-api-key <key>", "Z.AI API key")
-    .option("--minimax-api-key <key>", "MiniMax API key")
-    .option("--synthetic-api-key <key>", "Synthetic API key")
-    .option("--venice-api-key <key>", "Venice API key")
-    .option("--opencode-zen-api-key <key>", "OpenCode Zen API key")
-    .option("--gateway-port <port>", "Gateway port")
-    .option("--gateway-bind <mode>", "Gateway bind: loopback|tailnet|lan|auto|custom")
-    .option("--gateway-auth <mode>", "Gateway auth: token|password")
-    .option("--gateway-token <token>", "Gateway token (token auth)")
-    .option("--gateway-password <password>", "Gateway password (password auth)")
-    .option("--remote-url <url>", "Remote Gateway WebSocket URL")
-    .option("--remote-token <token>", "Remote Gateway token (optional)")
-    .option("--tailscale <mode>", "Tailscale: off|serve|funnel")
-    .option("--tailscale-reset-on-exit", "Reset tailscale serve/funnel on exit")
-    .option("--install-daemon", "Install gateway service")
-    .option("--no-install-daemon", "Skip gateway service install")
-    .option("--skip-daemon", "Skip gateway service install")
-    .option("--daemon-runtime <runtime>", "Daemon runtime: node|bun")
-    .option("--skip-channels", "Skip channel setup")
-    .option("--skip-skills", "Skip skills setup")
-    .option("--skip-health", "Skip health check")
-    .option("--skip-ui", "Skip Control UI/TUI prompts")
-    .option("--node-manager <name>", "Node manager for skills: npm|pnpm|bun")
-    .option("--json", "Output JSON summary", false)
+    .option("--skip-channels", t("options.skipChannels"))
+    .option("--skip-skills", t("options.skipSkills"))
+    .option("--skip-health", t("options.skipHealth"))
+    .option("--skip-ui", t("options.skipUi", "Skip Control UI/TUI prompts"))
+    .option("--node-manager <name>", `${t("options.nodeManager", "Node manager")}: npm|pnpm|bun`)
+    .option("--json", t("options.json"), false)
     .action(async (opts, command) => {
       await runCommandWithRuntime(defaultRuntime, async () => {
         const installDaemon = resolveInstallDaemonFlag(command, {

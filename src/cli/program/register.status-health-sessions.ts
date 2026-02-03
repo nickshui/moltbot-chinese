@@ -1,4 +1,5 @@
 import type { Command } from "commander";
+import { t } from "../../i18n/index.js";
 import { healthCommand } from "../../commands/health.js";
 import { sessionsCommand } from "../../commands/sessions.js";
 import { statusCommand } from "../../commands/status.js";
@@ -27,33 +28,30 @@ function parseTimeoutMs(timeout: unknown): number | null | undefined {
 export function registerStatusHealthSessionsCommands(program: Command) {
   program
     .command("status")
-    .description("Show channel health and recent session recipients")
-    .option("--json", "Output JSON instead of text", false)
-    .option("--all", "Full diagnosis (read-only, pasteable)", false)
-    .option("--usage", "Show model provider usage/quota snapshots", false)
-    .option("--deep", "Probe channels (WhatsApp Web + Telegram + Discord + Slack + Signal)", false)
-    .option("--timeout <ms>", "Probe timeout in milliseconds", "10000")
-    .option("--verbose", "Verbose logging", false)
-    .option("--debug", "Alias for --verbose", false)
+    .description(t("cli.status"))
+    .option("--json", t("options.json"), false)
+    .option("--all", t("options.allDiagnosis", "Full diagnosis (read-only)"), false)
+    .option("--usage", t("options.showUsage", "Show model provider usage/quota snapshots"), false)
+    .option("--deep", t("options.deepProbe", "Probe channels"), false)
+    .option("--timeout <ms>", t("options.timeout"), "10000")
+    .option("--verbose", t("options.verbose"), false)
+    .option("--debug", t("options.debug"), false)
     .addHelpText(
       "after",
       () =>
-        `\n${theme.heading("Examples:")}\n${formatHelpExamples([
-          ["moltbot status", "Show channel health + session summary."],
-          ["moltbot status --all", "Full diagnosis (read-only)."],
-          ["moltbot status --json", "Machine-readable output."],
+        `\n${theme.heading(t("help.examples"))}\n${formatHelpExamples([
+          ["moltbot status", t("examples.showStatus")],
+          ["moltbot status --all", t("examples.fullDiagnosis")],
+          ["moltbot status --json", t("examples.machineReadable")],
           ["moltbot status --usage", "Show model provider usage/quota snapshots."],
-          [
-            "moltbot status --deep",
-            "Run channel probes (WA + Telegram + Discord + Slack + Signal).",
-          ],
-          ["moltbot status --deep --timeout 5000", "Tighten probe timeout."],
+          ["moltbot status --deep", t("examples.runChannelProbes")],
+          ["moltbot status --deep --timeout 5000", t("examples.tightenProbeTimeout")],
         ])}`,
     )
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/status", "docs.molt.bot/cli/status")}\n`,
+        `\n${theme.muted(t("help.docs"))} ${formatDocsLink("/cli/status", "docs.molt.bot/cli/status")}\n`,
     )
     .action(async (opts) => {
       const verbose = resolveVerbose(opts);
@@ -79,15 +77,15 @@ export function registerStatusHealthSessionsCommands(program: Command) {
 
   program
     .command("health")
-    .description("Fetch health from the running gateway")
-    .option("--json", "Output JSON instead of text", false)
-    .option("--timeout <ms>", "Connection timeout in milliseconds", "10000")
-    .option("--verbose", "Verbose logging", false)
-    .option("--debug", "Alias for --verbose", false)
+    .description(t("cli.health"))
+    .option("--json", t("options.json"), false)
+    .option("--timeout <ms>", t("options.timeout"), "10000")
+    .option("--verbose", t("options.verbose"), false)
+    .option("--debug", t("options.debug"), false)
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/health", "docs.molt.bot/cli/health")}\n`,
+        `\n${theme.muted(t("help.docs"))} ${formatDocsLink("/cli/health", "docs.molt.bot/cli/health")}\n`,
     )
     .action(async (opts) => {
       const verbose = resolveVerbose(opts);
@@ -110,27 +108,30 @@ export function registerStatusHealthSessionsCommands(program: Command) {
 
   program
     .command("sessions")
-    .description("List stored conversation sessions")
-    .option("--json", "Output as JSON", false)
-    .option("--verbose", "Verbose logging", false)
-    .option("--store <path>", "Path to session store (default: resolved from config)")
-    .option("--active <minutes>", "Only show sessions updated within the past N minutes")
+    .description(t("cli.sessions"))
+    .option("--json", t("options.json"), false)
+    .option("--verbose", t("options.verbose"), false)
+    .option("--store <path>", t("options.storePath", "Path to session store"))
+    .option(
+      "--active <minutes>",
+      t("options.activeMinutes", "Only show sessions updated within the past N minutes"),
+    )
     .addHelpText(
       "after",
       () =>
         `\n${theme.heading("Examples:")}\n${formatHelpExamples([
-          ["moltbot sessions", "List all sessions."],
-          ["moltbot sessions --active 120", "Only last 2 hours."],
-          ["moltbot sessions --json", "Machine-readable output."],
-          ["moltbot sessions --store ./tmp/sessions.json", "Use a specific session store."],
+          ["moltbot sessions", t("examples.listSessions")],
+          ["moltbot sessions --active 120", t("examples.listRecentSessions")],
+          ["moltbot sessions --json", t("examples.machineReadable")],
+          ["moltbot sessions --store ./tmp/sessions.json", t("options.storePath")],
         ])}\n\n${theme.muted(
-          "Shows token usage per session when the agent reports it; set agents.defaults.contextTokens to see % of your model window.",
+          t("help.tokenUsageHint", "Shows token usage per session when the agent reports it."),
         )}`,
     )
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/sessions", "docs.molt.bot/cli/sessions")}\n`,
+        `\n${theme.muted(t("help.docs"))} ${formatDocsLink("/cli/sessions", "docs.molt.bot/cli/sessions")}\n`,
     )
     .action(async (opts) => {
       setVerbose(Boolean(opts.verbose));

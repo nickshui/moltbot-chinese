@@ -70,7 +70,7 @@ const LOBSTER_ASCII = [
   "█░░░░░█░░░░░█████░█░█░█░█░░█░████░░█░░░█░░█░",
   "█░░░░░█░░░░░█░░░█░█░█░█░█░░█░█░░█░░█░░░█░░█░",
   "░████░█████░█░░░█░░█░█░░███░░████░░░███░░░█░",
-  "              🦞 FRESH DAILY 🦞",
+  "              🦞 每日新鲜 🦞",
 ];
 
 export function formatCliBannerArt(options: BannerOptions = {}): string {

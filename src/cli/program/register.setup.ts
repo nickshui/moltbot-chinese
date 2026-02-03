@@ -1,4 +1,5 @@
 import type { Command } from "commander";
+import { t } from "../../i18n/index.js";
 import { onboardCommand } from "../../commands/onboard.js";
 import { setupCommand } from "../../commands/setup.js";
 import { defaultRuntime } from "../../runtime.js";
@@ -10,21 +11,21 @@ import { runCommandWithRuntime } from "../cli-utils.js";
 export function registerSetupCommand(program: Command) {
   program
     .command("setup")
-    .description("Initialize ~/.clawdbot/moltbot.json and the agent workspace")
+    .description(t("cli.setup"))
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/setup", "docs.molt.bot/cli/setup")}\n`,
+        `\n${theme.muted(t("help.docs"))} ${formatDocsLink("/cli/setup", "docs.molt.bot/cli/setup")}\n`,
     )
     .option(
       "--workspace <dir>",
-      "Agent workspace directory (default: ~/clawd; stored as agents.defaults.workspace)",
+      "代理工作空间目录（默认：~/clawd；存储为 agents.defaults.workspace）",
     )
-    .option("--wizard", "Run the interactive onboarding wizard", false)
-    .option("--non-interactive", "Run the wizard without prompts", false)
-    .option("--mode <mode>", "Wizard mode: local|remote")
-    .option("--remote-url <url>", "Remote Gateway WebSocket URL")
-    .option("--remote-token <token>", "Remote Gateway token (optional)")
+    .option("--wizard", t("options.wizard"), false)
+    .option("--non-interactive", t("options.nonInteractive"), false)
+    .option("--mode <mode>", `${t("options.mode")}: local|remote`)
+    .option("--remote-url <url>", t("options.remoteUrl"))
+    .option("--remote-token <token>", t("options.remoteToken"))
     .action(async (opts, command) => {
       await runCommandWithRuntime(defaultRuntime, async () => {
         const hasWizardFlags = hasExplicitOptions(command, [

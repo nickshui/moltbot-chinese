@@ -1,4 +1,5 @@
 import { html } from "lit";
+import { t } from "../../i18n/index.js";
 
 import type { ConfigUiHints } from "../types";
 import type { ChannelsProps } from "./channels.types";
@@ -71,11 +72,11 @@ export function renderChannelConfigForm(props: ChannelConfigFormProps) {
   const analysis = analyzeConfigSchema(props.schema);
   const normalized = analysis.schema;
   if (!normalized) {
-    return html`<div class="callout danger">Schema unavailable. Use Raw.</div>`;
+    return html`<div class="callout danger">${t("config.schemaUnavailable")}</div>`;
   }
   const node = resolveSchemaNode(normalized, ["channels", props.channelId]);
   if (!node) {
-    return html`<div class="callout danger">Channel config schema unavailable.</div>`;
+    return html`<div class="callout danger">${t("config.channelSchemaUnavailable")}</div>`;
   }
   const configValue = props.configValue ?? {};
   const value = resolveChannelValue(configValue, props.channelId);

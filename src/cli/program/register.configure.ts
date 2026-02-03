@@ -1,4 +1,5 @@
 import type { Command } from "commander";
+import { t } from "../../i18n/index.js";
 import {
   CONFIGURE_WIZARD_SECTIONS,
   configureCommand,
@@ -12,15 +13,15 @@ import { runCommandWithRuntime } from "../cli-utils.js";
 export function registerConfigureCommand(program: Command) {
   program
     .command("configure")
-    .description("Interactive prompt to set up credentials, devices, and agent defaults")
+    .description(t("cli.configure"))
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/configure", "docs.molt.bot/cli/configure")}\n`,
+        `\n${theme.muted(t("help.docs"))} ${formatDocsLink("/cli/configure", "docs.molt.bot/cli/configure")}\n`,
     )
     .option(
       "--section <section>",
-      `Configuration sections (repeatable). Options: ${CONFIGURE_WIZARD_SECTIONS.join(", ")}`,
+      `${t("options.configSection", "Configuration sections")}: ${CONFIGURE_WIZARD_SECTIONS.join(", ")}`,
       (value: string, previous: string[]) => [...previous, value],
       [] as string[],
     )
@@ -39,7 +40,7 @@ export function registerConfigureCommand(program: Command) {
         const invalid = sections.filter((s) => !CONFIGURE_WIZARD_SECTIONS.includes(s as never));
         if (invalid.length > 0) {
           defaultRuntime.error(
-            `Invalid --section: ${invalid.join(", ")}. Expected one of: ${CONFIGURE_WIZARD_SECTIONS.join(", ")}.`,
+            `${t("errors.invalid")} --section: ${invalid.join(", ")}. ${t("common.expected", "Expected")}: ${CONFIGURE_WIZARD_SECTIONS.join(", ")}.`,
           );
           defaultRuntime.exit(1);
           return;

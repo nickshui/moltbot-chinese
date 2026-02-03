@@ -1,5 +1,6 @@
 import { setTimeout as delay } from "node:timers/promises";
 import type { Command } from "commander";
+import { t } from "../i18n/index.js";
 import { buildGatewayConnectionDetails } from "../gateway/call.js";
 import { parseLogLine } from "../logging/parse-log-line.js";
 import { formatDocsLink } from "../terminal/links.js";
@@ -140,7 +141,10 @@ function emitGatewayError(
   errorLine: (text: string) => boolean,
 ) {
   const details = buildGatewayConnectionDetails({ url: opts.url });
-  const message = "Gateway not reachable. Is it running and accessible?";
+  const message = t(
+    "errors.gatewayNotReachable",
+    "Gateway not reachable. Is it running and accessible?",
+  );
   const hint = `Hint: run \`${formatCliCommand("moltbot doctor")}\`.`;
   const errorText = err instanceof Error ? err.message : String(err);
 
@@ -170,7 +174,7 @@ function emitGatewayError(
 export function registerLogsCli(program: Command) {
   const logs = program
     .command("logs")
-    .description("Tail gateway file logs via RPC")
+    .description(t("cli.logs"))
     .option("--limit <n>", "Max lines to return", "200")
     .option("--max-bytes <n>", "Max bytes to read", "250000")
     .option("--follow", "Follow log output", false)
@@ -235,7 +239,7 @@ export function registerLogsCli(program: Command) {
           if (
             !emitJsonLine({
               type: "notice",
-              message: "Log tail truncated (increase --max-bytes).",
+              message: t("logs.tailTruncated", "Log tail truncated (increase --max-bytes)."),
             })
           ) {
             return;
@@ -245,7 +249,7 @@ export function registerLogsCli(program: Command) {
           if (
             !emitJsonLine({
               type: "notice",
-              message: "Log cursor reset (file rotated).",
+              message: t("logs.cursorReset", "Log cursor reset (file rotated)."),
             })
           ) {
             return;

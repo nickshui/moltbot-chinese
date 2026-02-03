@@ -1,4 +1,5 @@
 import type { Command } from "commander";
+import { t } from "../../i18n/index.js";
 import { dashboardCommand } from "../../commands/dashboard.js";
 import { doctorCommand } from "../../commands/doctor.js";
 import { resetCommand } from "../../commands/reset.js";
@@ -11,20 +12,28 @@ import { runCommandWithRuntime } from "../cli-utils.js";
 export function registerMaintenanceCommands(program: Command) {
   program
     .command("doctor")
-    .description("Health checks + quick fixes for the gateway and channels")
+    .description(t("cli.doctor"))
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/doctor", "docs.molt.bot/cli/doctor")}\n`,
+        `\n${theme.muted(t("help.docs"))} ${formatDocsLink("/cli/doctor", "docs.molt.bot/cli/doctor")}\n`,
     )
-    .option("--no-workspace-suggestions", "Disable workspace memory system suggestions", false)
-    .option("--yes", "Accept defaults without prompting", false)
-    .option("--repair", "Apply recommended repairs without prompting", false)
-    .option("--fix", "Apply recommended repairs (alias for --repair)", false)
-    .option("--force", "Apply aggressive repairs (overwrites custom service config)", false)
-    .option("--non-interactive", "Run without prompts (safe migrations only)", false)
-    .option("--generate-gateway-token", "Generate and configure a gateway token", false)
-    .option("--deep", "Scan system services for extra gateway installs", false)
+    .option(
+      "--no-workspace-suggestions",
+      t("options.disableWorkspaceSuggestions", "Disable workspace memory system suggestions"),
+      false,
+    )
+    .option("--yes", t("options.yes"), false)
+    .option("--repair", t("options.repair", "Apply recommended repairs without prompting"), false)
+    .option("--fix", t("options.fix", "Apply recommended repairs (alias for --repair)"), false)
+    .option("--force", t("options.force", "Apply aggressive repairs"), false)
+    .option("--non-interactive", t("options.nonInteractive"), false)
+    .option(
+      "--generate-gateway-token",
+      t("options.generateGatewayToken", "Generate and configure a gateway token"),
+      false,
+    )
+    .option("--deep", t("options.deep", "Scan system services for extra gateway installs"), false)
     .action(async (opts) => {
       await runCommandWithRuntime(defaultRuntime, async () => {
         await doctorCommand(defaultRuntime, {
@@ -41,13 +50,13 @@ export function registerMaintenanceCommands(program: Command) {
 
   program
     .command("dashboard")
-    .description("Open the Control UI with your current token")
+    .description(t("cli.dashboard"))
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/dashboard", "docs.molt.bot/cli/dashboard")}\n`,
+        `\n${theme.muted(t("help.docs"))} ${formatDocsLink("/cli/dashboard", "docs.molt.bot/cli/dashboard")}\n`,
     )
-    .option("--no-open", "Print URL but do not launch a browser", false)
+    .option("--no-open", t("options.noOpen", "Print URL but do not launch a browser"), false)
     .action(async (opts) => {
       await runCommandWithRuntime(defaultRuntime, async () => {
         await dashboardCommand(defaultRuntime, {
@@ -58,16 +67,16 @@ export function registerMaintenanceCommands(program: Command) {
 
   program
     .command("reset")
-    .description("Reset local config/state (keeps the CLI installed)")
+    .description(t("cli.reset"))
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/reset", "docs.molt.bot/cli/reset")}\n`,
+        `\n${theme.muted(t("help.docs"))} ${formatDocsLink("/cli/reset", "docs.molt.bot/cli/reset")}\n`,
     )
-    .option("--scope <scope>", "config|config+creds+sessions|full (default: interactive prompt)")
-    .option("--yes", "Skip confirmation prompts", false)
-    .option("--non-interactive", "Disable prompts (requires --scope + --yes)", false)
-    .option("--dry-run", "Print actions without removing files", false)
+    .option("--scope <scope>", t("options.scope", "config|config+creds+sessions|full"))
+    .option("--yes", t("options.yes"), false)
+    .option("--non-interactive", t("options.nonInteractive"), false)
+    .option("--dry-run", t("options.dryRun"), false)
     .action(async (opts) => {
       await runCommandWithRuntime(defaultRuntime, async () => {
         await resetCommand(defaultRuntime, {
@@ -81,20 +90,20 @@ export function registerMaintenanceCommands(program: Command) {
 
   program
     .command("uninstall")
-    .description("Uninstall the gateway service + local data (CLI remains)")
+    .description(t("cli.uninstall"))
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/uninstall", "docs.molt.bot/cli/uninstall")}\n`,
+        `\n${theme.muted(t("help.docs"))} ${formatDocsLink("/cli/uninstall", "docs.molt.bot/cli/uninstall")}\n`,
     )
-    .option("--service", "Remove the gateway service", false)
-    .option("--state", "Remove state + config", false)
-    .option("--workspace", "Remove workspace dirs", false)
-    .option("--app", "Remove the macOS app", false)
-    .option("--all", "Remove service + state + workspace + app", false)
-    .option("--yes", "Skip confirmation prompts", false)
-    .option("--non-interactive", "Disable prompts (requires --yes)", false)
-    .option("--dry-run", "Print actions without removing files", false)
+    .option("--service", t("options.removeService", "Remove the gateway service"), false)
+    .option("--state", t("options.removeState", "Remove state + config"), false)
+    .option("--workspace", t("options.removeWorkspace", "Remove workspace dirs"), false)
+    .option("--app", t("options.removeApp", "Remove the macOS app"), false)
+    .option("--all", t("options.removeAll", "Remove service + state + workspace + app"), false)
+    .option("--yes", t("options.yes"), false)
+    .option("--non-interactive", t("options.nonInteractive"), false)
+    .option("--dry-run", t("options.dryRun"), false)
     .action(async (opts) => {
       await runCommandWithRuntime(defaultRuntime, async () => {
         await uninstallCommand(defaultRuntime, {

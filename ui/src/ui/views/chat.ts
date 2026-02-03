@@ -15,6 +15,7 @@ import {
 } from "../chat/grouped-render";
 import { renderMarkdownSidebar } from "./markdown-sidebar";
 import "../components/resizable-divider";
+import { t } from "../../i18n/index.js";
 
 export type CompactionIndicatorStatus = {
   active: boolean;
@@ -74,22 +75,22 @@ const COMPACTION_TOAST_DURATION_MS = 5000;
 function renderCompactionIndicator(status: CompactionIndicatorStatus | null | undefined) {
   if (!status) return nothing;
 
-  // Show "compacting..." while active
+  // 显示"正在压缩..."
   if (status.active) {
     return html`
       <div class="callout info compaction-indicator compaction-indicator--active">
-        ${icons.loader} Compacting context...
+        ${icons.loader} ${t("chat.compacting")}
       </div>
     `;
   }
 
-  // Show "compaction complete" briefly after completion
+  // 显示"压缩完成"
   if (status.completedAt) {
     const elapsed = Date.now() - status.completedAt;
     if (elapsed < COMPACTION_TOAST_DURATION_MS) {
       return html`
         <div class="callout success compaction-indicator compaction-indicator--complete">
-          ${icons.check} Context compacted
+          ${icons.check} ${t("chat.compacted")}
         </div>
       `;
     }
@@ -157,7 +158,7 @@ function renderAttachmentPreview(props: ChatProps) {
             <button
               class="chat-attachment__remove"
               type="button"
-              aria-label="Remove attachment"
+              aria-label="${t("common.delete")}"
               @click=${() => {
                 const next = (props.attachments ?? []).filter(
                   (a) => a.id !== att.id,
@@ -191,9 +192,9 @@ export function renderChat(props: ChatProps) {
   const hasAttachments = (props.attachments?.length ?? 0) > 0;
   const composePlaceholder = props.connected
     ? hasAttachments
-      ? "Add a message or paste more images..."
-      : "Message (↩ to send, Shift+↩ for line breaks, paste images)"
-    : "Connect to the gateway to start chatting…";
+      ? "添加消息或粘贴更多图片..."
+      : t("chat.placeholder")
+    : `${t("chat.disconnected")}...`;
 
   const splitRatio = props.splitRatio ?? 0.6;
   const sidebarOpen = Boolean(props.sidebarOpen && props.onCloseSidebar);
@@ -204,7 +205,7 @@ export function renderChat(props: ChatProps) {
       aria-live="polite"
       @scroll=${props.onChatScroll}
     >
-      ${props.loading ? html`<div class="muted">Loading chat…</div>` : nothing}
+      ${props.loading ? html`<div class="muted">${t("common.loading")}</div>` : nothing}
       ${repeat(buildChatItems(props), (item) => item.key, (item) => {
         if (item.kind === "reading-indicator") {
           return renderReadingIndicatorGroup(assistantIdentity);
@@ -251,8 +252,8 @@ export function renderChat(props: ChatProps) {
               class="chat-focus-exit"
               type="button"
               @click=${props.onToggleFocusMode}
-              aria-label="Exit focus mode"
-              title="Exit focus mode"
+              aria-label="${t("chat.exitFocusMode")}"
+              title="${t("chat.exitFocusMode")}"
             >
               ${icons.x}
             </button>
@@ -294,7 +295,7 @@ export function renderChat(props: ChatProps) {
       ${props.queue.length
         ? html`
             <div class="chat-queue" role="status" aria-live="polite">
-              <div class="chat-queue__title">Queued (${props.queue.length})</div>
+              <div class="chat-queue__title">${t("chat.queue")} (${props.queue.length})</div>
               <div class="chat-queue__list">
                 ${props.queue.map(
                   (item) => html`
@@ -302,13 +303,13 @@ export function renderChat(props: ChatProps) {
                       <div class="chat-queue__text">
                         ${item.text ||
                         (item.attachments?.length
-                          ? `Image (${item.attachments.length})`
+                          ? `图片 (${item.attachments.length})`
                           : "")}
                       </div>
                       <button
                         class="btn chat-queue__remove"
                         type="button"
-                        aria-label="Remove queued message"
+                        aria-label="${t("chat.removeQueuedMessage")}"
                         @click=${() => props.onQueueRemove(item.id)}
                       >
                         ${icons.x}
@@ -325,7 +326,7 @@ export function renderChat(props: ChatProps) {
         ${renderAttachmentPreview(props)}
         <div class="chat-compose__row">
           <label class="field chat-compose__field">
-            <span>Message</span>
+            <span>${t("chat.message")}</span>
             <textarea
               .value=${props.draft}
               ?disabled=${!props.connected}
@@ -349,14 +350,14 @@ export function renderChat(props: ChatProps) {
               ?disabled=${!props.connected || (!canAbort && props.sending)}
               @click=${canAbort ? props.onAbort : props.onNewSession}
             >
-              ${canAbort ? "Stop" : "New session"}
+              ${canAbort ? t("chat.abort") : t("chat.newSession")}
             </button>
             <button
               class="btn primary"
               ?disabled=${!props.connected}
               @click=${props.onSend}
             >
-              ${isBusy ? "Queue" : "Send"}<kbd class="btn-kbd">↵</kbd>
+              ${isBusy ? t("chat.queue") : t("chat.send")}<kbd class="btn-kbd">↵</kbd>
             </button>
           </div>
         </div>

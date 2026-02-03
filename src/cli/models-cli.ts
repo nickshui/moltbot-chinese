@@ -1,4 +1,5 @@
 import type { Command } from "commander";
+import { t } from "../i18n/index.js";
 
 import {
   githubCopilotLoginCommand,
@@ -38,7 +39,7 @@ function runModelsCommand(action: () => Promise<void>) {
 export function registerModelsCli(program: Command) {
   const models = program
     .command("models")
-    .description("Model discovery, scanning, and configuration")
+    .description(t("cli.models"))
     .option("--status-json", "Output JSON (alias for `models status --json`)", false)
     .option("--status-plain", "Plain output (alias for `models status --plain`)", false)
     .addHelpText(
@@ -49,7 +50,7 @@ export function registerModelsCli(program: Command) {
 
   models
     .command("list")
-    .description("List models (configured by default)")
+    .description(t("options.listModels", "List models"))
     .option("--all", "Show full model catalog", false)
     .option("--local", "Filter to local models", false)
     .option("--provider <name>", "Filter by provider")
@@ -63,7 +64,7 @@ export function registerModelsCli(program: Command) {
 
   models
     .command("status")
-    .description("Show configured model state")
+    .description(t("options.showModelState", "Show configured model state"))
     .option("--json", "Output JSON", false)
     .option("--plain", "Plain output", false)
     .option(

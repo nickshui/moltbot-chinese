@@ -58,15 +58,17 @@ function filterOutPartialTargets(targets, partialTargets) {
 }
 
 function resolveOxfmtCommand(repoRoot) {
-  const binName = process.platform === "win32" ? "oxfmt.cmd" : "oxfmt";
-  const local = path.join(repoRoot, "node_modules", ".bin", binName);
-  if (fs.existsSync(local)) {
-    return { command: local, args: [] };
+  const localNodeEntrypoint = path.join(repoRoot, "node_modules", "oxfmt", "bin", "oxfmt");
+  if (fs.existsSync(localNodeEntrypoint)) {
+    return { command: process.execPath, args: [localNodeEntrypoint, "--write"] };
   }
 
-  const result = spawnSync("oxfmt", ["--version"], { stdio: "ignore" });
+  const result = spawnSync("oxfmt", ["--version"], {
+    stdio: "ignore",
+    shell: process.platform === "win32",
+  });
   if (result.status === 0) {
-    return { command: "oxfmt", args: [] };
+    return { command: "oxfmt", args: ["--write"] };
   }
 
   return null;
@@ -79,7 +81,7 @@ function getGitPaths(args, repoRoot) {
 }
 
 function formatFiles(repoRoot, oxfmt, files) {
-  const result = spawnSync(oxfmt.command, ["--write", ...oxfmt.args, ...files], {
+  const result = spawnSync(oxfmt.command, [...oxfmt.args, ...files], {
     cwd: repoRoot,
     stdio: "inherit",
   });

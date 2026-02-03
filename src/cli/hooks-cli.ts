@@ -2,6 +2,7 @@ import fs from "node:fs";
 import fsp from "node:fs/promises";
 import path from "node:path";
 import type { Command } from "commander";
+import { t } from "../i18n/index.js";
 import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../agents/agent-scope.js";
 import type { MoltbotConfig } from "../config/config.js";
 import { resolveArchiveKind } from "../infra/archive.js";
@@ -420,7 +421,7 @@ export async function disableHook(hookName: string): Promise<void> {
 export function registerHooksCli(program: Command): void {
   const hooks = program
     .command("hooks")
-    .description("Manage internal agent hooks")
+    .description(t("cli.hooks"))
     .addHelpText(
       "after",
       () =>
@@ -429,7 +430,7 @@ export function registerHooksCli(program: Command): void {
 
   hooks
     .command("list")
-    .description("List all hooks")
+    .description(t("cli.subcommands.list"))
     .option("--eligible", "Show only eligible hooks", false)
     .option("--json", "Output as JSON", false)
     .option("-v, --verbose", "Show more details including missing requirements", false)
@@ -448,7 +449,7 @@ export function registerHooksCli(program: Command): void {
 
   hooks
     .command("info <name>")
-    .description("Show detailed information about a hook")
+    .description(t("options.hookInfo", "Show hook info"))
     .option("--json", "Output as JSON", false)
     .action(async (name, opts) => {
       try {
@@ -465,7 +466,7 @@ export function registerHooksCli(program: Command): void {
 
   hooks
     .command("check")
-    .description("Check hooks eligibility status")
+    .description(t("options.checkHooks", "Check hooks eligibility"))
     .option("--json", "Output as JSON", false)
     .action(async (opts) => {
       try {
@@ -482,7 +483,7 @@ export function registerHooksCli(program: Command): void {
 
   hooks
     .command("enable <name>")
-    .description("Enable a hook")
+    .description(t("options.enableHook", "Enable a hook"))
     .action(async (name) => {
       try {
         await enableHook(name);
@@ -496,7 +497,7 @@ export function registerHooksCli(program: Command): void {
 
   hooks
     .command("disable <name>")
-    .description("Disable a hook")
+    .description(t("options.disableHook", "Disable a hook"))
     .action(async (name) => {
       try {
         await disableHook(name);
@@ -510,7 +511,7 @@ export function registerHooksCli(program: Command): void {
 
   hooks
     .command("install")
-    .description("Install a hook pack (path, archive, or npm spec)")
+    .description(t("options.installHook", "Install hook pack"))
     .argument("<path-or-spec>", "Path to a hook pack or npm package spec")
     .option("-l, --link", "Link a local path instead of copying", false)
     .action(async (raw: string, opts: { link?: boolean }) => {
@@ -722,7 +723,7 @@ export function registerHooksCli(program: Command): void {
 
   hooks
     .command("update")
-    .description("Update installed hooks (npm installs only)")
+    .description(t("options.updateHooks", "Update installed hooks"))
     .argument("[id]", "Hook pack id (omit with --all)")
     .option("--all", "Update all tracked hooks", false)
     .option("--dry-run", "Show what would change without writing", false)
